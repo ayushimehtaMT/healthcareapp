@@ -12,6 +12,8 @@ class LoginActivity extends StatefulWidget {
 
 class LoginActivityState extends State<LoginActivity> {
 
+  TextEditingController passController = new TextEditingController();
+  TextEditingController usrController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class LoginActivityState extends State<LoginActivity> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: TextField(
+            controller: passController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Password',
@@ -65,5 +68,30 @@ class LoginActivityState extends State<LoginActivity> {
     ),
       ],
     );
+  }
+}
+
+class Validator {
+  static String? validateName({required String name}) {
+    if (name == null) {
+      return null;
+    }
+    if (name.isEmpty) {
+      return 'Name can\'t be empty';
+    }
+
+    return null;
+  }
+  static String? validatePassword({required String password}) {
+    if (password == null) {
+      return null;
+    }
+    if (password.isEmpty) {
+      return 'Password can\'t be empty';
+    } else if (password.length < 3) {
+      return 'Enter a password with length at least 6';
+    }
+
+    return null;
   }
 }
