@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthcareapp/MedicineDetails.dart';
+import 'package:healthcareapp/ViewCart.dart';
 
 class SearchMedicine extends StatefulWidget {
   const SearchMedicine({super.key, required this.title});
@@ -45,6 +46,44 @@ class SearchMedicineState extends State<SearchMedicine>{
   Widget build(BuildContext context) {return new Scaffold(
     appBar: new AppBar(
       title: new Text('Search Medicine'),
+      actions: [
+        Stack(
+          children: [
+            IconButton(
+              onPressed: () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  const ViewCartWidget()),
+                  );
+              },
+              icon: const Icon(
+                Icons.shopping_cart_rounded,
+                size: 30,
+              ),
+            ),
+            Positioned(
+              top: 4,
+              right: 6,
+              child: Container(
+                height: 22,
+                width: 22,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.purple,
+                ),
+                child: const Center(
+                    child: Text(
+                      "2",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+              ),
+            ),
+          ],
+        ),
+      ],
       elevation: 0.0,
     ),
     body: new Column(
