@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:healthcareapp/CartProvider.dart';
 import 'package:healthcareapp/LandingActivity.dart';
 import 'package:healthcareapp/LoginActivity.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+        create: (context) => CartProvider(),
+        child: const MyApp(),
+      ));
 }
 
 class MyApp extends StatelessWidget {

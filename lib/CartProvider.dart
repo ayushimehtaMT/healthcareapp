@@ -18,11 +18,6 @@ class CartProvider with ChangeNotifier {
   // double get totalPrice => _totalPrice;
   // Future<List<CartItem>> get cartItems => _cartItems;
 
-  Future<List<CartItem>> getCartData1() async {
-    _cartItems = getCartData();
-    return _cartItems;
-  }
-
   Future<List<CartItem>> getCartData() async {
     CartItem cartItem1 = CartItem(id: 1, productId: '1', productName: 'Cyclopalm', price: 10, quantity: 10);
     CartItem cartItem2 = CartItem(id: 2, productId: '2', productName: 'Combflam', price: 5, quantity: 5);

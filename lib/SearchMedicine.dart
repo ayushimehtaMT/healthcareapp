@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthcareapp/ViewCart.dart';
 
 class SearchMedicine extends StatefulWidget {
   const SearchMedicine({super.key, required this.title});
@@ -24,7 +25,12 @@ class SearchMedicineState extends State<SearchMedicine>{
       actions: [
       IconButton(
       icon: const Icon(Icons.shopping_cart),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>  const ViewCartWidget()),
+        );
+      },
       ),
         IconButton(
           icon: const Icon(Icons.arrow_back),
