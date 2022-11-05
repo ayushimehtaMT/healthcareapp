@@ -1,0 +1,52 @@
+[
+    {
+        "id": "1",
+        "name": "Abs CV Tablet",
+        "description": "Dowell Pharmaceutical"
+    },
+    {
+        "id": "2",
+        "name": "MG Clave 625 Tablet",
+        "description": "Mega Biosciences"
+    },
+    {
+        "id": "3",
+        "name": "Moxikind-CV 625 Table",
+        "description": "Mankind Pharma Ltd"
+    },
+    {
+        "id": "4",
+        "name": "Clavam 625 Tablet",
+        "description": "Dowell Pharmaceutical"
+    },
+    {
+        "id": "5",
+        "name": "Duet 625 Tablett",
+        "description": "Sun Pharmaceutical Industries Ltd"
+    },
+    {
+        "id": "6",
+        "name": "Novamox CV 625mg Tablett",
+        "description": "Lupin Ltd"
+    },
+    {
+        "id": "7",
+        "name": "Dolo 650",
+        "description": "Cipla Ltd"
+    },
+    {
+        "id": "8",
+        "name": "Clavidur 625 Tablet",
+        "description": "Lupin Ltd"
+    },
+    {
+        "id": "9",
+        "name": "Mega-CV 625 Tablet",
+        "description": "Aristo Pharmaceuticals Pvt Ltd"
+    },
+    {
+        "id": "10",
+        "name": "Fightox 625 Tablet",
+        "description": "Abbott"
+    }
+]

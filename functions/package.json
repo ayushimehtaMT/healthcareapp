@@ -14,7 +14,9 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@google-cloud/firestore": "^6.4.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.18.0"
