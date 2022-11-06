@@ -14,7 +14,7 @@ class PreviousOrdersProvider with ChangeNotifier {
   Future<List<PreviousOrder>> getPreviousOrders() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    var response = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/userorders/${prefs.get('userId')}"));
+    var response = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/completedOrders/${prefs.get('userId')}"));
     Iterable i = json.decode(response.body);
     List<PreviousOrder> previousOrders = List<PreviousOrder>.from(i.map((e) => PreviousOrder.fromJson(e)));
     return previousOrders;

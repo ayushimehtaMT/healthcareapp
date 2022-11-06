@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthcareapp/CartItemModel.dart';
 import 'package:healthcareapp/CartProvider.dart';
-import 'package:healthcareapp/DbHelper.dart';
 import 'package:healthcareapp/LandingActivity.dart';
 import 'package:healthcareapp/SearchMedicine.dart';
 import 'package:provider/provider.dart';

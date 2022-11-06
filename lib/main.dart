@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthcareapp/ActiveOrdersProvider.dart';
 import 'package:healthcareapp/CartProvider.dart';
 import 'package:healthcareapp/LoginActivity.dart';
 import 'package:healthcareapp/PreviousOrdersProvider.dart';
@@ -9,7 +10,8 @@ void main() {
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider<CartProvider>(create: (context) => CartProvider()),
-      ChangeNotifierProvider<PreviousOrdersProvider>(create: (context) => PreviousOrdersProvider())
+      ChangeNotifierProvider<PreviousOrdersProvider>(create: (context) => PreviousOrdersProvider()),
+      ChangeNotifierProvider<ActiveOrdersProvider>(create: (context) => ActiveOrdersProvider())
     ],
     child: const MyApp(),
   ));

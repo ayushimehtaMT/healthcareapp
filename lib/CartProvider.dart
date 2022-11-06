@@ -92,7 +92,8 @@ class CartProvider with ChangeNotifier {
       'id': 'OD$randNumber',
       'userId': prefs.get('userId'),
       'amountPaid': newTotalPrice,
-      'placedAt': DateTime.now().toString(),
+      'placedAt': DateTime.now().toString().replaceAll(' ', 'T'),
+      'inProgress': true,
       'items': items
     };
 
@@ -106,6 +107,10 @@ class CartProvider with ChangeNotifier {
     };
 
     await Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/${prefs.get('userId')}", data: cartBody);
+
+    prefs.setDouble('totalPrice', newTotalPrice);
+    getPerfItems();
+    notifyListeners();
   }
 
   void subtractFromTotalPrice(double productPrice) {

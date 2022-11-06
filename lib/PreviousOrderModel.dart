@@ -3,12 +3,14 @@ class PreviousOrder {
   final double? amountPaid;
   final String? placedAt;
   final String? userId;
+  final bool? inProgress;
 
   PreviousOrder({
     required this.id,
     required this.amountPaid,
     required this.placedAt,
-    required this.userId
+    required this.userId,
+    required this.inProgress
   });
 
   factory PreviousOrder.fromJson(Map<String, dynamic> json) {
@@ -16,7 +18,8 @@ class PreviousOrder {
       id: json['id'] as String,
       amountPaid: 0.0 + json['amountPaid'],
       placedAt: json['placedAt'] as String,
-      userId: json['userId'] as String
+      userId: json['userId'] as String,
+      inProgress: json['inProgress'] as bool
     );
   }
 
@@ -24,14 +27,16 @@ class PreviousOrder {
     : id = res['id'],
     amountPaid = res['amountPaid'],
     placedAt = res['placedAt'],
-    userId = res['userId'];
+    userId = res['userId'],
+    inProgress = res['inProgress'];
 
   Map<String, Object?> toMap() {
     return {
       'id': id,
       'amountPaid': amountPaid,
       'placedAt': placedAt,
-      'userId': userId
+      'userId': userId,
+      'inProgress': inProgress
     };
   }
 
@@ -41,6 +46,7 @@ class PreviousOrder {
       'amountPaid': amountPaid,
       'placedAt': placedAt,
       'userId': userId,
+      'inProgress': inProgress
     };
   }
 }
