@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:healthcareapp/CartItemModel.dart';
+import 'package:healthcareapp/MedicineModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -71,6 +72,41 @@ class CartProvider with ChangeNotifier {
           getPerfItems(),
           notifyListeners()
         });
+
+    prefs.setDouble('totalPrice', newTotalPrice);
+    getPerfItems();
+    notifyListeners();
+  }
+
+  Future<void> addToCart(Medicine medicine) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var cart = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/${prefs.get('userId')}"));
+
+    Iterable i = json.decode(cart.body)['cartItems'];
+    List<CartItem> cartItems = List<CartItem>.from(i.map((e) => CartItem.fromJson(e)));
+    cartItems.add(CartItem(id: medicine.id, productId: medicine.productId,
+        productName: medicine.productName, price: medicine.price as int, quantity: 1));
+
+    double newTotalPrice = 0.0;
+    cartItems.forEach((element) {
+      newTotalPrice += element.quantity! * element.price!;
+    });
+
+
+    var body = {
+      'id': _cartId,
+      'totalPrice': newTotalPrice,
+      'userId': prefs.get('userId'),
+      'cartItems': cartItems
+    };
+
+    Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/${prefs.get('userId')}", data: body)
+        .then((value) => {
+      prefs.setDouble('totalPrice', newTotalPrice),
+      getPerfItems(),
+      notifyListeners()
+    });
 
     prefs.setDouble('totalPrice', newTotalPrice);
     getPerfItems();
