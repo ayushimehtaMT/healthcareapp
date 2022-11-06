@@ -107,15 +107,34 @@ app.post("/api/v1/orders", async (req, resp) => {
     resp.status(201).send();
 });
 
-// Get User's All Orders
-app.get('/api/v1/userorders/:userId', async (req, resp) => {
+// Get User's All In Progress Orders
+app.get('/api/v1/inProgressOrders/:userId', async (req, resp) => {
     db.collection('orders').where("userId", "==", req.params.userId)
         .get()
         .then((querySnapshot) => {
             var orders = new Array();
             querySnapshot.forEach((doc) => {
-                orders.push(doc.data());
+                if (doc.data()['inProgress'] == true) {
+                    orders.push(doc.data());
+                }
             })
+            orders.sort((a, b) => { return (new Date(a['placedAt'])).getTime() - (new Date(b['placedAt'])).getTime() }).reverse();
+            resp.status(200).send(orders);
+        });
+});
+
+// Get User's All Completed Orders
+app.get('/api/v1/completedOrders/:userId', async (req, resp) => {
+    db.collection('orders').where("userId", "==", req.params.userId)
+        .get()
+        .then((querySnapshot) => {
+            var orders = new Array();
+            querySnapshot.forEach((doc) => {
+                if (doc.data()['inProgress'] == false) {
+                    orders.push(doc.data());
+                }
+            })
+            orders.sort((a, b) => { return (new Date(a['placedAt'])).getTime() - (new Date(b['placedAt'])).getTime() }).reverse();
             resp.status(200).send(orders);
         });
 });
@@ -129,6 +148,21 @@ app.get('/api/v1/orders/:id', async (req, resp) => {
                 resp.status(200).send(doc.data());
         })
     });
+});
+
+// Get All Medicines
+app.get('/api/v1/medicines/:name', async (req, resp) => {
+    db.collection('medicines')
+        .get()
+        .then((querySnapshot) => {
+            var medicines = new Array();
+            querySnapshot.forEach((doc) => {
+                if (doc.data()['productName'].toLowerCase().includes(req.params.name.toLowerCase())) {
+                    medicines.push(doc.data());
+                }
+            })
+            resp.status(200).send(medicines);
+        });
 });
 
 //export our api to firebase and cloud functions
