@@ -23,7 +23,7 @@ app.post("/api/v1/login/",(req,res) => {
     (async () => {
         try {
             await db.collection("userDetails").doc(`/${Date.now()}/`).create({
-                id: Date.now(),
+                userId: Date.now(),
                 name: req.body.name,
                 password: req.body.password,
             })
@@ -35,6 +35,15 @@ app.post("/api/v1/login/",(req,res) => {
         }
     })()
 })
+
+app.get('/api/v1/getLoginDetail/', async (req, resp) => {
+    db.collection('userDetails').get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                resp.status(200).send(doc.data());
+        })
+    });
+  });
 
 app.get('/api/v1/search/:id', async (req, resp) => {
     db.collection('medicineList').where("id", "==", req.params.id)
