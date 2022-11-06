@@ -14,12 +14,13 @@ class CartProvider with ChangeNotifier {
   String _cartId = '';
 
   Future<List<CartItem>> getCartData() async {
-    var response = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1"));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var response = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/${prefs.get('userId')}"));
 
     Iterable i = json.decode(response.body)['cartItems'];
     List<CartItem> cartItems = List<CartItem>.from(i.map((e) => CartItem.fromJson(e)));
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('totalPrice', 0.0 + json.decode(response.body)['totalPrice']);
     _cartId = json.decode(response.body)['id'];
     return cartItems;
@@ -34,10 +35,11 @@ class CartProvider with ChangeNotifier {
   void getPerfItems() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _totalPrice = prefs.getDouble('totalPrice') ?? 0.0;
-    // notifyListeners();
   }
 
   Future<void> updateCart(List<CartItem> cartItems, int cartItemId, bool isAdd, bool isDelete) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     double newTotalPrice = 0.0;
     List<CartItem> updatedCartItems = [];
 
@@ -59,23 +61,26 @@ class CartProvider with ChangeNotifier {
     var body = {
       'id': _cartId,
       'totalPrice': newTotalPrice,
-      'userId': 'user_1',
+      'userId': prefs.get('userId'),
       'cartItems': updatedCartItems
     };
 
-    Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1", data: body)
+    Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/${prefs.get('userId')}", data: body)
         .then((value) => {
+          prefs.setDouble('totalPrice', newTotalPrice),
+          getPerfItems(),
           notifyListeners()
         });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('totalPrice', newTotalPrice);
     getPerfItems();
     notifyListeners();
   }
 
   Future<void> placeOrder() async {
-    var cart = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1"));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var cart = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/${prefs.get('userId')}"));
     Iterable i = json.decode(cart.body)['cartItems'];
     List<CartItem> items = List<CartItem>.from(i.map((e) => CartItem.fromJson(e)));
 
@@ -85,7 +90,7 @@ class CartProvider with ChangeNotifier {
     int randNumber = random.nextInt(10000);
     var orderBody = {
       'id': 'OD$randNumber',
-      'userId': 'user_1',
+      'userId': prefs.get('userId'),
       'amountPaid': newTotalPrice,
       'placedAt': DateTime.now().toString(),
       'items': items
@@ -96,11 +101,11 @@ class CartProvider with ChangeNotifier {
     var cartBody = {
       'id': _cartId,
       'totalPrice': 0.0,
-      'userId': 'user_1',
+      'userId': prefs.get('userId'),
       'cartItems': []
     };
 
-    await Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1", data: cartBody);
+    await Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/${prefs.get('userId')}", data: cartBody);
   }
 
   void subtractFromTotalPrice(double productPrice) {

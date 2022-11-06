@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'LandingActivity.dart';
 
@@ -15,6 +16,9 @@ class LoginActivityState extends State<LoginActivity> {
 
   @override
   Widget build(BuildContext context) {
+
+    ProcessLogin login = ProcessLogin();
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -53,6 +57,7 @@ class LoginActivityState extends State<LoginActivity> {
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
               ),
               onPressed: () {
+                login.processLogin();
                 Navigator.push(context,
                   MaterialPageRoute(builder: (context) =>
                   const LandingActivity()
@@ -73,5 +78,13 @@ class LoginActivityState extends State<LoginActivity> {
         ),
       ],
     );
+  }
+}
+
+class ProcessLogin {
+
+  processLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userId', 'user_1');
   }
 }
