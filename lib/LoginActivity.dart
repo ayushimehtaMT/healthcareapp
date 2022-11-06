@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'LandingActivity.dart';
 
@@ -12,14 +13,17 @@ class LoginActivity extends StatefulWidget {
 
 class LoginActivityState extends State<LoginActivity> {
 
-  TextEditingController passController = new TextEditingController();
-  TextEditingController usrController = new TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        Container(
+          width: 150,
+          height: 150,
+          child: Image.asset('assets/launch_image.png'),
+        ),
+        const SizedBox(height: 30,),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: TextField(
@@ -29,11 +33,10 @@ class LoginActivityState extends State<LoginActivity> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: TextField(
-            controller: passController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Password',
             ),
@@ -41,57 +44,34 @@ class LoginActivityState extends State<LoginActivity> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: TextButton(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-          ),
-          onPressed: () { Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) =>  MaterialApp(
-                title: "Health Care Landing Page",
-                theme: ThemeData(
-                  primarySwatch: Colors.blue,
-                ),
-                //home: const LandingActivity(title: 'Health Care Landing Page'),
-                home: Scaffold(
-                  appBar: AppBar(
-                    title: Text('Health Care Landing'),
+          child: SizedBox(
+            height: 45,
+            width: 140,
+            child: TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () {
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) =>
+                  const LandingActivity()
                   ),
-                  body: const LandingActivity(title: 'Health Care Landing Page'),
+                );
+              },
+              child: Text(
+                'Login',
+                style: GoogleFonts.getFont(
+                  'Poppins',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
                 ),
-              )),//const LandingActivity(title: 'Health Care Landing Page')),
-              );
-            },//home: const LandingActivity(title: 'Health Care Landing Page');},
-          child: Text('Login'),
+              ),
+            ),
+          ),
         ),
-    ),
       ],
     );
-  }
-}
-
-class Validator {
-  static String? validateName({required String name}) {
-    if (name == null) {
-      return null;
-    }
-    if (name.isEmpty) {
-      return 'Name can\'t be empty';
-    }
-
-    return null;
-  }
-  static String? validatePassword({required String password}) {
-    if (password == null) {
-      return null;
-    }
-    if (password.isEmpty) {
-      return 'Password can\'t be empty';
-    } else if (password.length < 3) {
-      return 'Enter a password with length at least 6';
-    }
-
-    return null;
   }
 }

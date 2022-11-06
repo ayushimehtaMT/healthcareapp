@@ -1,160 +1,234 @@
 import 'package:flutter/material.dart';
-import 'package:healthcareapp/MedicineDetails.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:healthcareapp/LandingActivity.dart';
+import 'package:healthcareapp/PreviousOrderModel.dart';
+import 'package:healthcareapp/PreviousOrdersProvider.dart';
 import 'package:healthcareapp/ViewCart.dart';
+import 'package:provider/provider.dart';
 
 class SearchMedicine extends StatefulWidget {
-  const SearchMedicine({super.key, required this.title});
-  final String title;
+  const SearchMedicine({super.key});
 
   @override
   State<SearchMedicine> createState() => SearchMedicineState();
 }
 
 class SearchMedicineState extends State<SearchMedicine>{
-  TextEditingController controller = new TextEditingController();
-  List<MedicineDetails> _searchResult = [];
-  List<MedicineDetails> _medicineDetails = [];
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    LandingActivity(),
+    SearchMedicine(),
+    ViewCartWidget()
+  ];
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    final previousOrdersProvider = Provider.of<PreviousOrdersProvider>(context);
 
-    getMedicineDetails();
-  }
-
-  Future<Null> getMedicineDetails() async {
-   // final response = await http.get(url);
-    //final responseJson = json.decode(response.body);
-
-    setState(() {
-      //for (Map user in responseJson) {
-        _medicineDetails.add(MedicineDetails(1, 'Abs CV Tablet', 'Dowell Pharmaceutical'));
-        _medicineDetails.add(MedicineDetails(2, 'MG Clave 625 Tablet', 'Mega Biosciences'));
-        _medicineDetails.add(MedicineDetails(3, 'Moxikind-CV 625 Tablet', 'Mankind Pharma Ltd'));
-        _medicineDetails.add(MedicineDetails(4, 'Clavam 625 Tablet', 'Alkem Laboratories Ltd'));
-        _medicineDetails.add(MedicineDetails(5, 'Moxclav 625 Tablet', 'Sun Pharmaceutical Industries Ltd'));
-        _medicineDetails.add(MedicineDetails(6, 'Duet 625 Tablet', 'Lupin Ltd'));
-        _medicineDetails.add(MedicineDetails(7, 'Novamox CV 625mg Tablet', 'Cipla Ltd'));
-        _medicineDetails.add(MedicineDetails(8, 'Clavidur 625 Tablet', 'Lupin Ltd'));
-        _medicineDetails.add(MedicineDetails(9, 'Mega-CV 625 Tablet', 'Aristo Pharmaceuticals Pvt Ltd'));
-        _medicineDetails.add(MedicineDetails(10, 'Fightox 625 Tablet', 'Abbott'));
-      //}
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {return new Scaffold(
-    appBar: new AppBar(
-      title: new Text('Search Medicine'),
-      actions: [
-        Stack(
-          children: [
-            IconButton(
-              onPressed: () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) =>  const ViewCartWidget()),
-                  );
-              },
-              icon: const Icon(
-                Icons.shopping_cart_rounded,
-                size: 30,
-              ),
-            ),
-            Positioned(
-              top: 4,
-              right: 6,
-              child: Container(
-                height: 22,
-                width: 22,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.purple,
-                ),
-                child: const Center(
-                    child: Text(
-                      "2",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )),
-              ),
-            ),
-          ],
-        ),
-      ],
-      elevation: 0.0,
-    ),
-    body: new Column(
-      children: <Widget>[
-        new Container(
-          color: Theme.of(context).primaryColor,
-          child: new Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: new Card(
-              child: new ListTile(
-                leading: new Icon(Icons.search),
-                title: new TextField(
-                  controller: controller,
-                  decoration: new InputDecoration(
-                      hintText: 'Search', border: InputBorder.none),
-                  onChanged: onSearchTextChanged,
-                ),
-                trailing: new IconButton(icon: new Icon(Icons.cancel), onPressed: () {
-                  controller.clear();
-                  onSearchTextChanged('');
-                },),
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.blue,
+        title: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
+          child: Text(
+            'Search',
+            style: GoogleFonts.getFont(
+              'Poppins',
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
             ),
           ),
         ),
-        new Expanded(
-          child: _searchResult.length != 0 || controller.text.isNotEmpty
-              ? new ListView.builder(
-            itemCount: _searchResult.length,
-            itemBuilder: (context, i) {
-              return new Card(
-                child: new ListTile(
-                  //leading: new CircleAvatar(backgroundImage: new NetworkImage(_searchResult[i].profileUrl,),),
-                  title: new Text(_searchResult[i].medicineName),
-                  subtitle: new Text(_searchResult[i].medicineDesc),
-                ),
-                margin: const EdgeInsets.all(0.0),
-              );
-            },
-          )
-              : new ListView.builder(
-            itemCount: _medicineDetails.length,
-            itemBuilder: (context, index) {
-              return new Card(
-                child: new ListTile(
-                  //leading: new CircleAvatar(backgroundImage: new NetworkImage(_userDetails[index].profileUrl,),),
-                  title: new Text(_medicineDetails[index].medicineName),
-                  subtitle: new Text(_medicineDetails[index].medicineDesc),
-                ),
-                margin: const EdgeInsets.all(0.0),
-              );
-            },
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 140,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const SizedBox(width: 20,),
+              Text(
+                  'My Orders',
+                  style: GoogleFonts.getFont(
+                    'Poppins',
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  )
+              ),
+              const SizedBox(width: 10,),
+              Text(
+                  '(Showing last 3 orders...)',
+                  style: GoogleFonts.getFont(
+                    'Poppins',
+                    color: Colors.black,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 10,
+                  )
+              ),
+            ],
           ),
-        ),
-      ],
-    ),
-  );
-  }
-
-  onSearchTextChanged(String text) async {
-    _searchResult.clear();
-    if (text.isEmpty) {
-      setState(() {});
-      return;
-    }
-
-    _medicineDetails.forEach((MedicineDetails) {
-      if (MedicineDetails.medicineName.contains(text))
-        _searchResult.add(MedicineDetails);
-    });
-
-    setState(() {});
+          FutureBuilder(future: previousOrdersProvider.getPreviousOrders(),
+              builder: (context, AsyncSnapshot<List<PreviousOrder>> snapshot) {
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return Expanded(
+                child: ListView.builder(
+                    itemCount: snapshot.data!.length <= 3 ? snapshot.data!.length : 3,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 18.0, top: 8.0, right: 8.0, bottom: 8.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Order ID',
+                                        style: GoogleFonts.getFont(
+                                            'Poppins',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15
+                                        ),
+                                      ),
+                                      Text('Placed At',
+                                        style: GoogleFonts.getFont(
+                                            'Poppins',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15
+                                        ),
+                                      ),
+                                      Text('Amount Paid',
+                                        style: GoogleFonts.getFont(
+                                            'Poppins',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15
+                                        ),
+                                      ),
+                                      const SizedBox(height: 45,),
+                                    ],
+                                  ),
+                                  Expanded(child: Container(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text('OD${snapshot.data![index]!.id!}',
+                                          style: GoogleFonts.getFont(
+                                              'Poppins',
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15
+                                          ),
+                                        ),
+                                        Text(snapshot.data![index]!.placedAt!,
+                                          style: GoogleFonts.getFont(
+                                              'Poppins',
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            const Text('₹',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 17,
+                                              ),),
+                                            Text(snapshot.data![index].amountPaid!.toString(),
+                                              style: GoogleFonts.getFont(
+                                                  'Poppins',
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 15
+                                              ),)
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10,),
+                                        TextButton(
+                                          style: ButtonStyle(
+                                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                                            backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                                          ),
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                              content: Text('Your cart has been updated!'),
+                                            ));
+                                            previousOrdersProvider.refill(snapshot.data![index].id!);
+                                          },
+                                          child: Text(
+                                            'Refill',
+                                            style: GoogleFonts.getFont(
+                                              'Poppins',
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    })
+              );
+            }
+            return Expanded(child:
+            Container(
+              alignment: Alignment.center,
+              child: Text('No previous orders',
+                  style: GoogleFonts.getFont(
+                    'Poppins',
+                    color: const Color(0xFFF83F3F),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  )),
+            ));
+          })
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (int index) {
+          setState(() {
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context) =>
+                _widgetOptions.elementAt(index),
+              ),
+            );
+          });
+        },
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
+          ),
+        ],
+        currentIndex: 1,
+        selectedItemColor: const Color(0xFFF83F3F),
+      ),
+    );
   }
 }

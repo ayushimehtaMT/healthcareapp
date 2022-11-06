@@ -1,92 +1,124 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:healthcareapp/UnderConstruction.dart';
+import 'package:healthcareapp/ViewCart.dart';
 
 import 'SearchMedicine.dart';
 
 class LandingActivity extends StatefulWidget {
-  const LandingActivity({super.key, required this.title});
-  final String title;
+  const LandingActivity({super.key});
 
   @override
   State<LandingActivity> createState() => LandingActivityState();
 }
 
 class LandingActivityState extends State<LandingActivity> {
-  int currentPageIndex = 0;
+  static const List<Widget> _widgetOptions = <Widget>[
+    LandingActivity(),
+    SearchMedicine(),
+    ViewCartWidget()
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.blue,
+        title: Text(
+          'Home',
+          style: GoogleFonts.getFont(
+            'Poppins',
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 22,
+          ),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const SizedBox(
+              height: 64,
+              child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Text('Menu',
+                      style: TextStyle(fontSize: 18, color: Colors.white)
+                  ),
+                )
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.explore,
+              ),
+              title: const Text('Order Medicine',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Poppins')
+              ),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) => const SearchMedicine()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.commute,
+              ),
+              title: const Text('Book Lab Appointment',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Poppins')
+              ),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) => const UnderConstruction(title: 'Book Lab Appointment')),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.medical_services,
+              ),
+              title: const Text('Book Doctor Appointment',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Poppins')
+              ),
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (BuildContext context) => const UnderConstruction(title: 'Book Doctor Appointment')),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (int index) {
           setState(() {
-            currentPageIndex = index;
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context) =>
+                  _widgetOptions.elementAt(index),
+              ),
+            );
           });
         },
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            icon: Icon(Icons.explore),
-            label: 'Order Medicines',
+        currentIndex: 0,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.commute),
-            label: 'Book lab Appointment',
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.medical_information),
-            icon: Icon(Icons.medical_information_outlined),
-            label: 'Book Doctor Appointment',
-          ),
-        ],
-      ),
-      body: <Widget>[
-        Container(
-          alignment: Alignment.center,
-          child: const Text('No Transactions'),
-        ),
-        Container(
-         // color: Colors.green,
-          alignment: Alignment.center,
-          child: const Text('Under Construction'),
-        ),
-        Container(
-          //color: Colors.blue,
-          alignment: Alignment.center,
-          child: const Text('Under Construction'),
-        ),
-        ][currentPageIndex],
-      floatingActionButton: Wrap(
-        direction: Axis.horizontal,
-        children: <Widget>[
-          Container(
-              margin:EdgeInsets.all(10),
-              child: FloatingActionButton(
-                onPressed: (){
-                  //action code for button 1
-                },
-                backgroundColor: Colors.blue,
-                tooltip: 'Add Medicine',
-                child: Icon(Icons.add),
-              )
-          ),
-          Container(
-              margin:EdgeInsets.all(10),
-              child: FloatingActionButton(
-                onPressed: (){
-                  //action code for button 1
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>  MaterialApp(
-                      home: const SearchMedicine(title: 'Search Medicine'),
-                      )),
-                  );
-                },
-                backgroundColor: Colors.blue,
-                tooltip: 'Search Medicine',
-                child: Icon(Icons.search),
-              )
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
           ),
         ],
-      ),
-      );
+        selectedItemColor: const Color(0xFFF83F3F),
+      )
+    );
   }
 }
