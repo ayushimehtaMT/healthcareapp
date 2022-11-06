@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:math';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:healthcareapp/CartItemModel.dart';
-import 'package:healthcareapp/DbHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -8,69 +10,97 @@ import 'dart:convert';
 
 class CartProvider with ChangeNotifier {
 
-  DbHelper db = DbHelper();
-
-  int _cartItemsCount = 0;
-  double _totalPrice = 215.0;
-  late Future<List<CartItem>> _cartItems;
-
-  // int get cartItemsCount => _cartItemsCount;
-  // double get totalPrice => _totalPrice;
-  // Future<List<CartItem>> get cartItems => _cartItems;
+  double _totalPrice = 0.0;
+  String _cartId = '';
 
   Future<List<CartItem>> getCartData() async {
-    CartItem cartItem1 = CartItem(id: 1, productId: '1', productName: 'Cyclopalm', price: 10, quantity: 10);
-    CartItem cartItem2 = CartItem(id: 2, productId: '2', productName: 'Combflam', price: 5, quantity: 5);
-    CartItem cartItem3 = CartItem(id: 3, productId: '3', productName: 'ChestNCold', price: 15, quantity: 6);
-    db.insert(cartItem1);
-    db.insert(cartItem2);
-    db.insert(cartItem3);
+    var response = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1"));
 
-    _cartItems = db.getCartItems();
-    return _cartItems;
+    Iterable i = json.decode(response.body)['cartItems'];
+    List<CartItem> cartItems = List<CartItem>.from(i.map((e) => CartItem.fromJson(e)));
 
-    // print("Calling API");
-    // var response = await http.get(Uri.parse('https://mocki.io/v1/6142a1ab-1fbf-49ba-832d-3cb80ea1304f'));
-    // Iterable i = json.decode(response.body);
-    // List<CartItem> cartItems = List<CartItem>.from(i.map((e) => CartItem.fromJson(e)));
-    // return cartItems;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('totalPrice', 0.0 + json.decode(response.body)['totalPrice']);
+    _cartId = json.decode(response.body)['id'];
+    return cartItems;
   }
 
   void setPerfItems() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('cartItemsCount', _cartItemsCount);
     prefs.setDouble('totalPrice', _totalPrice);
     notifyListeners();
   }
 
   void getPerfItems() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _cartItemsCount = prefs.getInt('cartItemsCount') ?? 0;
     _totalPrice = prefs.getDouble('totalPrice') ?? 0.0;
     // notifyListeners();
   }
 
-  void incrementCartItemsCount() {
-    _cartItemsCount++;
-    setPerfItems();
-    notifyListeners();
-  }
+  Future<void> updateCart(List<CartItem> cartItems, int cartItemId, bool isAdd, bool isDelete) async {
+    double newTotalPrice = 0.0;
+    List<CartItem> updatedCartItems = [];
 
-  // void decrementCartItemsCount() {
-  //   _cartItemsCount--;
-  //   setPerfItems();
-  //   notifyListeners();
-  // }
+    cartItems.forEach((element) {
+      if (element.id == cartItemId) {
+        element.quantity = element.quantity! + (isAdd! ? 1 : -1);
+        if (isDelete || element.quantity == 0) {
+          element.quantity = 0;
+        } else {
+          updatedCartItems.add(element);
+        }
+      } else {
+        updatedCartItems.add(element);
+      }
 
-  int getCartItemsCount() {
+      newTotalPrice += element.quantity! * element.price!;
+    });
+
+    var body = {
+      'id': _cartId,
+      'totalPrice': newTotalPrice,
+      'userId': 'user_1',
+      'cartItems': updatedCartItems
+    };
+
+    Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1", data: body)
+        .then((value) => {
+          notifyListeners()
+        });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('totalPrice', newTotalPrice);
     getPerfItems();
-    return _cartItemsCount;
+    notifyListeners();
   }
 
-  void addToTotalPrice(double productPrice) {
-    _totalPrice += productPrice;
-    setPerfItems();
-    notifyListeners();
+  Future<void> placeOrder() async {
+    var cart = await http.get(Uri.parse("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1"));
+    Iterable i = json.decode(cart.body)['cartItems'];
+    List<CartItem> items = List<CartItem>.from(i.map((e) => CartItem.fromJson(e)));
+
+    double newTotalPrice = 0.0 + json.decode(cart.body)['totalPrice'];
+
+    Random random = Random();
+    int randNumber = random.nextInt(10000);
+    var orderBody = {
+      'id': 'OD$randNumber',
+      'userId': 'user_1',
+      'amountPaid': newTotalPrice,
+      'placedAt': DateTime.now().toString(),
+      'items': items
+    };
+
+    await Dio().post("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/orders", data: orderBody);
+
+    var cartBody = {
+      'id': _cartId,
+      'totalPrice': 0.0,
+      'userId': 'user_1',
+      'cartItems': []
+    };
+
+    await Dio().put("http://${getApiServer()}:5001/wqeqwe-5708c/us-central1/medappapi/api/v1/carts/user_1", data: cartBody);
   }
 
   void subtractFromTotalPrice(double productPrice) {
@@ -80,7 +110,15 @@ class CartProvider with ChangeNotifier {
   }
 
   double getTotalPrice() {
-    // getPerfItems();
+    getPerfItems();
     return _totalPrice;
+  }
+
+  String getApiServer() {
+    if (kIsWeb) { // ios or web
+      return 'localhost';
+    } else { // android
+      return '10.0.2.2';
+    }
   }
 }
